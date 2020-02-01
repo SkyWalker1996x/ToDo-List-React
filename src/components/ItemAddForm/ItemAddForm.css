@@ -1,4 +1,11 @@
 .item-add-form {
     margin-top: 10px;
+}
 
+.d-flex {
+    justify-content: space-between;
+}
+
+.item-add-form input {
+    width: 75%;
 }
