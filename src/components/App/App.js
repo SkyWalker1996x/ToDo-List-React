@@ -10,11 +10,20 @@ class App extends Component {
 
     maxId = 100;
 
+    createTodoItem = (label) => {
+        return {
+            id: this.maxId++,
+            label,
+            important: false,
+            done: false,
+        }
+    };
+
     state = {
         todoData: [
-            {id: 1, label: 'Drink Coffee', important: false},
-            {id: 2, label: 'Make Awesome App', important: true},
-            {id: 3, label: 'Have a lunch', important: false}
+            this.createTodoItem('Drink Coffee'),
+            this.createTodoItem('Make Awesome App'),
+            this.createTodoItem('Have a lunch')
         ]
     };
 
@@ -52,20 +61,44 @@ class App extends Component {
         })
     };
 
+    toggleProperty = (arr, id, propName) => {
+        const idx = arr.findIndex((item) => item.id === id);
+
+        const oldItem = arr[idx];
+        const newItem = { ...oldItem,
+            [propName]: !oldItem[propName]};
+
+        return [
+            ...arr.slice(0, idx),
+            newItem,
+            ...arr.slice(idx + 1)
+        ];
+    };
+
     handleImportantToggle = (id) => {
-        console.log(`Toggle important: ${id}`)
+        this.setState(({todoData}) => {
+            return {
+                todoData: this.toggleProperty(todoData, id, 'important')
+            }
+        })
     };
 
     handleDoneToggle = (id) => {
-        console.log(`Toggle done: ${id}`)
+        this.setState(({todoData}) => {
+            return {
+                todoData: this.toggleProperty(todoData, id, 'done')
+            };
+        });
     };
 
-
-
     render() {
+        const {todoData} =  this.state;
+        const doneCount = todoData.filter(item => item.done).length;
+        const todoCount = todoData.length - doneCount;
+
         return (
             <div className="todo-app">
-                <AppHeader toDo={1} done={3}/>
+                <AppHeader toDo={todoCount} done={doneCount}/>
 
                 <div className="top-panel d-flex">
                     <SearchPanel/>
@@ -73,10 +106,10 @@ class App extends Component {
                 </div>
 
                 <TodoList
-                    todos={this.state.todoData}
+                    todos={todoData}
                     onDeleted={this.handleDeleteItem}
-                    onImportant={this.handleImportantToggle}
-                    onDone={this.handleDoneToggle}  />
+                    onToggleImportant={this.handleImportantToggle}
+                    onToggleDone={this.handleDoneToggle}  />
 
                 <ItemAddForm onAdded={this.handleAddItem}/>
             </div>
