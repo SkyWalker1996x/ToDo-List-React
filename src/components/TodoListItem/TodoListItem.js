@@ -4,30 +4,8 @@ import './TodoListItem.css';
 
 class TodoListItem extends Component{
 
-    state = {
-        done: false,
-        important: this.props.important
-    };
-
-    onLabelChange = () => {
-        this.setState(({done}) => {
-            return {
-                done: !done
-            }
-        })
-    };
-
-    onImportantChange = () => {
-        this.setState(({important}) => {
-            return {
-                important: !important
-            };
-        })
-    };
-
     render() {
-        const {label, onDeleted} = this.props;
-        const { done, important } = this.state;
+        const {label, done, important, onDeleted, onToggleImportant, onToggleDone} = this.props;
         const style = {
             color: important ? 'steelblue' : 'black',
             fontWeight: important ? 'bold' : 'normal'
@@ -42,13 +20,13 @@ class TodoListItem extends Component{
             <span
                 className="todo-list-item-label"
                 style={style}
-                onClick={ this.onLabelChange }>
+                onClick={ onToggleDone }>
                 {label}
             </span>
 
             <button type="button"
                     className="btn btn-outline-success btn-sm float-right"
-                    onClick={ this.onImportantChange }>
+                    onClick={ onToggleImportant }>
                     <i className="fa fa-exclamation"/>
             </button>
 
@@ -62,28 +40,36 @@ class TodoListItem extends Component{
     }
 }
 
-/*const TodoListItemFunc = ({label, important = false}) => {
-
+/*const TodoListItem = ({label, done, important, onDeleted, onToggleImportant, onToggleDone}) => {
     const style = {
         color: important ? 'steelblue' : 'black',
         fontWeight: important ? 'bold' : 'normal'
     };
 
+    let classNames = 'todo-list-item';
+
+    if (done) {
+        classNames += ' done'
+    }
+
     return (
-        <span className="todo-list-item">
+        <span className={classNames}>
             <span
                 className="todo-list-item-label"
-                style={style}>
+                style={style}
+                onClick={ onToggleDone }>
                 {label}
             </span>
 
             <button type="button"
-                    className="btn btn-outline-success btn-sm float-right">
+                    className="btn btn-outline-success btn-sm float-right"
+                    onClick={ onToggleImportant }>
                     <i className="fa fa-exclamation"/>
             </button>
 
             <button type="button"
-                    className="btn btn-outline-danger btn-sm float-right">
+                    className="btn btn-outline-danger btn-sm float-right"
+                    onClick={onDeleted}>
                     <i className="fa fa-trash-o"/>
             </button>
         </span>
