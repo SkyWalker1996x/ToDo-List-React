@@ -24,7 +24,8 @@ class App extends Component {
             this.createTodoItem('Drink Coffee'),
             this.createTodoItem('Make Awesome App'),
             this.createTodoItem('Have a lunch')
-        ]
+        ],
+        term: ''
     };
 
     handleDeleteItem = (id) => {
@@ -65,8 +66,10 @@ class App extends Component {
         const idx = arr.findIndex((item) => item.id === id);
 
         const oldItem = arr[idx];
-        const newItem = { ...oldItem,
-            [propName]: !oldItem[propName]};
+        const newItem = {
+            ...oldItem,
+            [propName]: !oldItem[propName]
+        };
 
         return [
             ...arr.slice(0, idx),
@@ -91,8 +94,23 @@ class App extends Component {
         });
     };
 
+    search(items, term) {
+        if (term === '') {
+            return items
+        }
+
+        return items.filter((item) => {
+            return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1
+        })
+    }
+
+    onSearchChange = (term) => {
+        this.setState( {term} )
+    };
+
     render() {
-        const {todoData} =  this.state;
+        const {todoData, term} = this.state;
+        const visibleItems = this.search(todoData, term);
         const doneCount = todoData.filter(item => item.done).length;
         const todoCount = todoData.length - doneCount;
 
@@ -101,15 +119,16 @@ class App extends Component {
                 <AppHeader toDo={todoCount} done={doneCount}/>
 
                 <div className="top-panel d-flex">
-                    <SearchPanel/>
+                    <SearchPanel
+                        onSearchChange = {this.onSearchChange}/>
                     <ItemStatusFilter/>
                 </div>
 
                 <TodoList
-                    todos={todoData}
+                    todos={visibleItems}
                     onDeleted={this.handleDeleteItem}
                     onToggleImportant={this.handleImportantToggle}
-                    onToggleDone={this.handleDoneToggle}  />
+                    onToggleDone={this.handleDoneToggle}/>
 
                 <ItemAddForm onAdded={this.handleAddItem}/>
             </div>
